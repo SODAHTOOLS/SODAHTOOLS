@@ -1,1 +1,328 @@
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="SodahTools provides free online text tools, calculators, image utilities, QR code generation, SEO tools and developer utilities.">
+<meta name="theme-color" content="#5146d8">
+<title>SodahTools - Free Online Tools</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f4f6ff;color:#202445;line-height:1.6}
+header{background:linear-gradient(135deg,#10162f,#5146d8,#8b5cf6);color:white;padding:28px 15px 65px;text-align:center}
+.logo{font-size:30px;font-weight:bold}
+.logo span{color:#d4c9ff}
+header h1{font-size:38px;margin:25px 0 5px}
+header p{color:#eeeaff}
+.search{max-width:600px;margin:25px auto 0;display:flex;background:white;border-radius:12px;padding:6px}
+.search input{flex:1;min-width:0;border:0;outline:0;padding:13px;font-size:16px}
+button{cursor:pointer}
+.search button,.card button,#toolPanel button{border:0;background:#635bff;color:white;border-radius:8px;padding:11px 15px}
+.container{max-width:1100px;margin:auto;padding:25px 15px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:-48px;position:relative}
+.stat,.card,#toolPanel,.info{background:white;border-radius:15px;padding:18px;box-shadow:0 5px 20px #2221}
+.stat{text-align:center}
+.stat strong{display:block;font-size:24px;color:#6255ed}
+h2{line-height:1.3}
+.categories{display:flex;gap:8px;flex-wrap:wrap;margin:25px 0}
+.categories button{border:1px solid #ddd;background:white;padding:10px 14px;border-radius:25px}
+.categories button.active{background:#635bff;color:white;border-color:#635bff}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:15px}
+.card{padding:18px;min-width:0}
+.icon{width:45px;height:45px;border-radius:12px;display:grid;place-items:center;background:#eeecff;font-size:24px}
+.card h3{font-size:17px;line-height:1.4}
+.card p{font-size:14px;color:#707792;min-height:42px}
+#toolPanel{display:none;margin-top:25px;scroll-margin-top:15px}
+#toolForm label{display:block;font-weight:bold;margin-top:12px}
+#toolForm input,#toolForm textarea,#toolForm select{display:block;width:100%;padding:12px;margin:6px 0 12px;border:1px solid #ddd;border-radius:8px;font:inherit}
+#toolForm textarea{min-height:110px;resize:vertical}
+#toolPanel button{margin:4px 4px 4px 0}
+#result{white-space:pre-wrap;overflow-wrap:anywhere;background:#f0efff;padding:14px;border-radius:8px;margin-top:15px}
+#result img{display:block;max-width:100%;height:auto}
+.info{margin-top:28px}
+.info h2{color:#5146d8}
+footer{background:#10162f;color:white;text-align:center;padding:25px;margin-top:35px}
+footer a{color:#d4c9ff}
+@media(max-width:850px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:600px){
+ header h1{font-size:30px}
+ .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+ .card{padding:13px}
+ .stats{gap:7px}
+ .stat{padding:12px 5px;font-size:13px}
+ .stat strong{font-size:19px}
+}
+@media(max-width:360px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+ <div class="logo">Sodah<span>Tools</span></div>
+ <h1>Free Online Tools</h1>
+ <p>Smart Tools. Simple Solutions.</p>
+ <div class="search">
+  <input id="search" placeholder="Search your tool..." aria-label="Search tools">
+  <button onclick="renderTools()">Search</button>
+ </div>
+</header>
+<main class="container">
+ <div class="stats">
+  <div class="stat"><strong>20</strong>Online Tools</div>
+  <div class="stat"><strong>Free</strong>To Use</div>
+  <div class="stat"><strong>24/7</strong>Online Access</div>
+ </div>
+ <h2>Explore Our Tools</h2>
+ <div class="categories" id="categories"></div>
+ <div class="grid" id="grid"></div>
+ <section id="toolPanel">
+  <h2 id="toolTitle">Online Tool</h2>
+  <div id="toolForm"></div>
+  <div id="result" hidden></div>
+ </section>
+ <section class="info">
+  <h2>About SodahTools</h2>
+  <p>SodahTools brings useful online tools together in one simple, mobile-friendly website. Use our text utilities, calculators, image tools, developer tools and SEO helpers for everyday digital tasks.</p>
+  <h2>Free Online Tools for Everyday Tasks</h2>
+  <p>Choose a tool, enter your information and view the result. Most calculations and text operations run directly in your browser. Some features, such as QR code generation, require an internet connection.</p>
+ </section>
+</main>
+<footer>
+ <strong>SodahTools</strong><br>
+ Smart Tools. Simple Solutions.<br>
+ <small>Free online utilities for everyday digital tasks.</small>
+</footer>
+<script>
+const tools=[
+['word','📝','Word Counter','Count words and characters.','Text'],
+['case','🔠','Case Converter','Change text case.','Text'],
+['repeat','🔁','Text Repeater','Repeat your text.','Text'],
+['spaces','🧹','Remove Extra Spaces','Clean extra spaces.','Text'],
+['slug','🔗','Text to Slug','Create a URL-friendly slug.','Text'],
+['age','🎂','Age Calculator','Calculate your age.','Calculator'],
+['percent','％','Percentage Calculator','Calculate percentages.','Calculator'],
+['gst','🧾','GST Calculator','Calculate GST and total amount.','Calculator'],
+['emi','🏦','EMI Calculator','Estimate monthly loan payments.','Calculator'],
+['date','📅','Date Difference','Calculate days between dates.','Calculator'],
+['resize','🖼️','Image Resizer','Resize an image in your browser.','Image'],
+['convert','🎨','PNG/JPG Converter','Convert image format.','Image'],
+['qr','▦','QR Code Generator','Create a QR code.','Image'],
+['password','🔐','Password Generator','Generate a random password.','Security'],
+['json','{ }','JSON Formatter','Format JSON data.','Developer'],
+['html','</>','HTML Encoder','Encode HTML characters.','Developer'],
+['url','🌐','URL Encoder/Decoder','Encode or decode text.','Developer'],
+['meta','🔍','Meta Tag Generator','Generate basic SEO tags.','SEO'],
+['robots','🤖','Robots.txt Generator','Create a robots.txt template.','SEO'],
+['youtube','▶️','YouTube Thumbnail','Preview a video thumbnail.','YouTube']
+];
+let active='All';
+const cats=['All',...new Set(tools.map(t=>t[4]))];
+const $=id=>document.getElementById(id);
+function renderCategories(){
+ $('categories').innerHTML=cats.map(c=>
+ `<button class="${c===active?'active':''}" onclick="setCat('${c}')">${c}</button>`
+ ).join('');
+}
+function setCat(c){active=c;renderCategories();renderTools();}
+function renderTools(){
+ const q=$('search').value.toLowerCase().trim();
+ const list=tools.filter(t=>
+ (active==='All'||t[4]===active)&&
+ (t[2]+' '+t[3]+' '+t[4]).toLowerCase().includes(q)
+ );
+ $('grid').innerHTML=list.map(t=>
+ `<article class="card">
+ <div class="icon">${t[1]}</div><h3>${t[2]}</h3>
+ <p>${t[3]}</p><button onclick="openTool('${t[0]}')">Open Tool →</button>
+ </article>`).join('');
+ if(!list.length)$('grid').innerHTML='<p>No tools found. Try another search.</p>';
+}
+$('search').addEventListener('input',renderTools);
+renderCategories();renderTools();
+function field(label,id,type='text',value=''){
+ return `<label for="${id}">${label}</label><input id="${id}" type="${type}" value="${value}">`;
+}
+function area(label='Enter text',id='txt'){
+ return `<label for="${id}">${label}</label><textarea id="${id}"></textarea>`;
+}
+function showForm(id,title,html){
+ $('toolTitle').textContent=title;
+ $('toolForm').innerHTML=html;
+ $('result').hidden=true;
+ $('result').textContent='';
+ $('result').innerHTML='';
+ $('toolPanel').style.display='block';
+ $('toolPanel').scrollIntoView({behavior:'smooth',block:'start'});
+}
+function output(value){
+ $('result').textContent=String(value);
+ $('result').hidden=false;
+}
+function outputImage(src,alt='Result image'){
+ const r=$('result');r.textContent='';
+ const img=document.createElement('img');
+ img.src=src;img.alt=alt;
+ r.appendChild(img);r.hidden=false;
+}
+function openTool(id){
+ const t=tools.find(x=>x[0]===id);
+ let html='';
+ switch(id){
+ case'word':
+ html=area()+`<button onclick="countWords()">Count Text</button>`;break;
+ case'case':
+ html=area()+`<button onclick="output($('txt').value.toUpperCase())">UPPERCASE</button>
+ <button onclick="output($('txt').value.toLowerCase())">lowercase</button>
+ <button onclick="output($('txt').value.replace(/\\b\\w/g,c=>c.toUpperCase()))">Title Case</button>`;break;
+ case'repeat':
+ html=area()+field('Repeat count','num','number','2')+`<button onclick="repeatText()">Repeat</button>`;break;
+ case'spaces':
+ html=area()+`<button onclick="output($('txt').value.replace(/\\s+/g,' ').trim())">Clean Text</button>`;break;
+ case'slug':
+ html=area()+`<button onclick="output($('txt').value.toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,''))">Create Slug</button>`;break;
+ case'age':
+ html=field('Date of birth','dob','date')+`<button onclick="calcAge()">Calculate Age</button>`;break;
+ case'percent':
+ html=field('Percentage (%)','a','number')+field('Number','b','number')+`<button onclick="calcPercent()">Calculate</button>`;break;
+ case'gst':
+ html=field('Amount (₹)','amt','number')+field('GST rate (%)','rate','number','18')+`<button onclick="calcGST()">Calculate GST</button>`;break;
+ case'emi':
+ html=field('Loan amount (₹)','principal','number')+field('Annual interest rate (%)','interest','number','10')+field('Loan term (years)','years','number','5')+`<button onclick="calcEMI()">Calculate EMI</button>`;break;
+ case'date':
+ html=field('Start date','start','date')+field('End date','end','date')+`<button onclick="calcDate()">Calculate Difference</button>`;break;
+ case'resize':
+ html=`<label>Select image</label><input id="imgFile" type="file" accept="image/*">`+field('Width (pixels)','imgWidth','number','500')+field('Height (pixels)','imgHeight','number','500')+`<button onclick="resizeImage()">Resize & Download</button>`;break;
+ case'convert':
+ html=`<label>Select image</label><input id="imgFile" type="file" accept="image/*">
+ <label>Output format</label><select id="imgFormat"><option value="image/png">PNG</option><option value="image/jpeg">JPG</option></select>
+ <button onclick="convertImage()">Convert & Download</button>`;break;
+ case'qr':
+ html=field('Text or URL','qrText')+`<button onclick="makeQR()">Generate QR Code</button><p>QR generation uses an external online service.</p>`;break;
+ case'password':
+ html=field('Password length (8–64)','passLength','number','16')+`<button onclick="makePassword()">Generate Password</button>`;break;
+ case'json':
+ html=area('Enter JSON','jsonText')+`<button onclick="formatJSON()">Format JSON</button>`;break;
+ case'html':
+ html=area('Enter HTML text','htmlText')+`<button onclick="encodeHTML()">Encode HTML</button>`;break;
+ case'url':
+ html=area('Enter URL or text','urlText')+`<button onclick="encodeURL()">Encode</button><button onclick="decodeURL()">Decode</button>`;break;
+ case'meta':
+ html=field('Website title','metaTitle')+area('Website description','metaDesc')+field('Website URL','metaURL','url')+`<button onclick="makeMeta()">Generate Meta Tags</button>`;break;
+ case'robots':
+ html=field('Website URL','robotsURL','url')+`<button onclick="makeRobots()">Generate robots.txt</button>`;break;
+ case'youtube':
+ html=field('YouTube video URL or ID','ytID')+`<button onclick="makeThumbnail()">Show Thumbnail</button>`;break;
+ }
+ showForm(id,t[2],html);
+}
+function countWords(){
+ const s=$('txt').value;
+ output(`Words: ${s.trim()?s.trim().split(/\s+/).length:0}\nCharacters: ${s.length}\nCharacters without spaces: ${s.replace(/\s/g,'').length}`);
+}
+function repeatText(){
+ const s=$('txt').value,n=Number($('num').value);
+ if(!Number.isInteger(n)||n<1||n>100)return output('Enter a repeat count from 1 to 100.');
+ output(Array(n).fill(s).join('\n'));
+}
+function calcAge(){
+ if(!$('dob').value)return output('Select your birth date.');
+ const d=new Date($('dob').value+'T00:00:00'),now=new Date();
+ if(isNaN(d)||d>now)return output('Select a valid birth date.');
+ let y=now.getFullYear()-d.getFullYear(),m=now.getMonth()-d.getMonth();
+ if(now.getDate()<d.getDate())m--;
+ if(m<0){y--;m+=12;}
+ output(`Age: ${y} years and ${m} months`);
+}
+function calcPercent(){
+ const a=Number($('a').value),b=Number($('b').value);
+ if($('a').value===''||$('b').value===''||!Number.isFinite(a)||!Number.isFinite(b))return output('Enter both numbers.');
+ output(`${a}% of ${b} = ${(a*b/100).toFixed(2)}`);
+}
+function calcGST(){
+ const a=Number($('amt').value),r=Number($('rate').value);
+ if($('amt').value===''||$('rate').value===''||a<0||r<0)return output('Enter valid non-negative amounts.');
+ output(`GST: ₹${(a*r/100).toFixed(2)}\nTotal: ₹${(a+a*r/100).toFixed(2)}`);
+}
+function calcEMI(){
+ const p=Number($('principal').value),annual=Number($('interest').value),years=Number($('years').value);
+ if(p<=0||annual<0||years<=0)return output('Enter a positive loan amount and term, and a non-negative rate.');
+ const n=years*12,r=annual/1200;
+ const emi=r===0?p/n:p*r*Math.pow(1+r,n)/(Math.pow(1+r,n)-1);
+ output(`Estimated monthly EMI: ₹${emi.toFixed(2)}\nTotal payment: ₹${(emi*n).toFixed(2)}\nEstimated interest: ₹${(emi*n-p).toFixed(2)}`);
+}
+function calcDate(){
+ if(!$('start').value||!$('end').value)return output('Select both dates.');
+ const a=new Date($('start').value+'T00:00:00'),b=new Date($('end').value+'T00:00:00');
+ output(`Difference: ${Math.abs(Math.round((b-a)/86400000))} days`);
+}
+function readImage(callback){
+ const f=$('imgFile').files[0];
+ if(!f)return output('Please select an image.');
+ if(!f.type.startsWith('image/'))return output('Select a valid image file.');
+ const img=new Image();
+ img.onload=()=>callback(img);
+ img.onerror=()=>output('Unable to open this image.');
+ img.src=URL.createObjectURL(f);
+}
+function downloadCanvas(img,w,h,type,filename){
+ const c=document.createElement('canvas');c.width=w;c.height=h;
+ c.getContext('2d').drawImage(img,0,0,w,h);
+ c.toBlob(blob=>{
+  if(!blob)return output('Could not convert the image.');
+  const url=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=url;a.download=filename;a.click();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+ },type,.92);
+}
+function resizeImage(){
+ const w=Number($('imgWidth').value),h=Number($('imgHeight').value);
+ if(!Number.isInteger(w)||!Number.isInteger(h)||w<1||h<1||w>5000||h>5000)return output('Width and height must be between 1 and 5000 pixels.');
+ readImage(img=>downloadCanvas(img,w,h,'image/png','resized-image.png'));
+}
+function convertImage(){
+ const type=$('imgFormat').value;
+ readImage(img=>downloadCanvas(img,img.naturalWidth,img.naturalHeight,type,type==='image/png'?'converted.png':'converted.jpg'));
+}
+function makeQR(){
+ const s=$('qrText').value.trim();
+ if(!s)return output('Enter text or a URL.');
+ outputImage('https://api.qrserver.com/v1/create-qr-code/?size=250x250&data='+encodeURIComponent(s),'Generated QR code');
+}
+function makePassword(){
+ const n=Number($('passLength').value);
+ if(!Number.isInteger(n)||n<8||n>64)return output('Choose a length from 8 to 64.');
+ const chars='ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%&*';
+ const arr=new Uint32Array(n);crypto.getRandomValues(arr);
+ output(Array.from(arr,x=>chars[x%chars.length]).join(''));
+}
+function formatJSON(){
+ try{output(JSON.stringify(JSON.parse($('jsonText').value),null,2));}
+ catch(e){output('Invalid JSON. Please check your input.');}
+}
+function encodeHTML(){
+ const d=document.createElement('div');d.textContent=$('htmlText').value;output(d.innerHTML);
+}
+function encodeURL(){output(encodeURIComponent($('urlText').value));}
+function decodeURL(){
+ try{output(decodeURIComponent($('urlText').value));}
+ catch(e){output('Invalid encoded URL text.');}
+}
+function makeMeta(){
+ const title=$('metaTitle').value,desc=$('metaDesc').value,url=$('metaURL').value;
+ const safe=s=>s.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+ output(`<title>${safe(title)}</title>\n<meta name="description" content="${safe(desc)}">\n<link rel="canonical" href="${safe(url)}">`);
+}
+function makeRobots(){
+ const url=$('robotsURL').value.trim().replace(/\/+$/,'');
+ if(!/^https?:\/\//i.test(url))return output('Enter a full URL starting with https://');
+ output(`User-agent: *\nAllow: /\n\nSitemap: ${url}/sitemap.xml`);
+}
+function makeThumbnail(){
+ let id=$('ytID').value.trim();
+ const m=id.match(/(?:v=|youtu\.be\/|shorts\/|embed\/)([a-zA-Z0-9_-]{11})/);
+ if(m)id=m[1];
+ if(!/^[a-zA-Z0-9_-]{11}$/.test(id))return output('Enter a valid YouTube video URL or 11-character video ID.');
+ outputImage('https://img.youtube.com/vi/'+id+'/hqdefault.jpg','YouTube thumbnail');
+}
+</script>
+</body>
+</html>
